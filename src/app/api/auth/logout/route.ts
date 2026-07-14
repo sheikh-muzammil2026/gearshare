@@ -2,14 +2,16 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
     const response = NextResponse.json(
-        { message: 'সফলভাবে লগআউট হয়েছে।' },
+        { message: 'সফলভাবে লগআউট হয়েছে।' },
         { status: 200 }
     );
 
-    // কুকি এক্সপায়ার করে দেওয়া
-    response.cookies.set('token', '', {
+    // 🚪 কুকির নাম পরিবর্তন করে 'user_session' করা হলো এবং maxAge সেট করা হলো
+    response.cookies.set('user_session', '', {
         httpOnly: true,
-        expires: new Date(0),
+        secure: process.env.NODE_ENV === 'production',
+        expires: new Date(0), // অতিবাহিত সময় দিয়ে কুকি ইনভ্যালিড করা
+        maxAge: 0,            // ব্রাউজারকে সাথে সাথে কুকিটি ডিলিট করতে বাধ্য করা
         path: '/',
     });
 

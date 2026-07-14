@@ -32,18 +32,17 @@ export default function Navbar() {
 
     const currentRoutes = isLoggedIn ? protectedRoutes : publicRoutes;
 
-    // Logout handler
-    const handleLogout = async () => {
-        try {
-            const res = await fetch('/api/auth/logout', { method: 'POST' });
-            if (res.ok) {
-                setIsLoggedIn(false);
-                window.location.href = '/'; // Logout-এর পর হোম পেজে রিডাইরেক্ট
-            }
-        } catch (error) {
-            console.error('Logout failed:', error);
+   const handleLogout = async () => {
+    try {
+        const res = await fetch('/api/auth/logout', { method: 'POST' });
+        if (res.ok) {
+            alert('Logged out successfully!');
+            window.location.href = '/login'; // লগআউট শেষে লগইন পেজে রিডাইরেক্ট
         }
-    };
+    } catch (err) {
+        console.error('Logout failed:', err);
+    }
+};
 
     return (
         <nav className="sticky top-0 z-50 bg-primary text-white border-b border-gray-800 shadow-md backdrop-blur-md bg-opacity-95 transition-all">
