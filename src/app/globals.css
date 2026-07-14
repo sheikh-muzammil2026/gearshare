@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  /* ৩টি প্রাইমারি কালার থিম */
+  --color-primary: #0f172a;
+  /* ডিপ স্লেট (প্রধান ব্যাকগ্রাউন্ড/টেক্সট) */
+  --color-accent: #2563eb;
+  /* ব্রাইট ব্লু (বাটন, অ্যাক্টিভ লিংক, CTA) */
+  --color-neutralBg: #f8fafc;
+  /* লাইট গ্রে (সেকশন ব্যাকগ্রাউন্ড) */
+
+  /* গ্লোবাল বর্ডার রেডিয়াস */
+  --radius-gear: 12px;
+}
+
+/* বেসিক লেআউট ফিক্স (অ্যাপ্লিকেশন স্মুথ দেখানোর জন্য) */
+@layer base {
+
+  html,
+  body {
+    @apply m-0 p-0 overflow-x-hidden;
+    background-color: var(--color-neutralBg);
+    color: var(--color-primary);
+  }
+}
