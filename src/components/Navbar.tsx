@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, LogOut, LayoutDashboard, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, LogOut, LogIn, UserPlus } from 'lucide-react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +21,7 @@ export default function Navbar() {
         { name: 'About Us', path: '/about' },
     ];
 
-    // Protected routes (Logged in state) - Minimum 5 routes
+    // Protected routes (Logged in state) - Minimum 4 routes (Dashboard-এর বদলে Manage Items রাখা হয়েছে)
     const protectedRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
@@ -32,17 +32,17 @@ export default function Navbar() {
 
     const currentRoutes = isLoggedIn ? protectedRoutes : publicRoutes;
 
-   const handleLogout = async () => {
-    try {
-        const res = await fetch('/api/auth/logout', { method: 'POST' });
-        if (res.ok) {
-            alert('Logged out successfully!');
-            window.location.href = '/login'; // লগআউট শেষে লগইন পেজে রিডাইরেক্ট
+    const handleLogout = async () => {
+        try {
+            const res = await fetch('/api/auth/logout', { method: 'POST' });
+            if (res.ok) {
+                alert('Logged out successfully!');
+                window.location.href = '/login'; // লগআউট শেষে লগইন পেজে রিডাইরেক্ট
+            }
+        } catch (err) {
+            console.error('Logout failed:', err);
         }
-    } catch (err) {
-        console.error('Logout failed:', err);
-    }
-};
+    };
 
     return (
         <nav className="sticky top-0 z-50 bg-primary text-white border-b border-gray-800 shadow-md backdrop-blur-md bg-opacity-95 transition-all">
@@ -71,12 +71,6 @@ export default function Navbar() {
                         {/* Dynamic Auth Buttons */}
                         {isLoggedIn ? (
                             <div className="flex items-center gap-3">
-                                <Link
-                                    href="/items/manage"
-                                    className="flex items-center gap-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 px-4 py-2 rounded-gear text-sm font-medium transition-all"
-                                >
-                                    <LayoutDashboard size={15} /> Dashboard
-                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center gap-1.5 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-gear text-sm font-medium transition-all"
@@ -133,13 +127,6 @@ export default function Navbar() {
                         {/* Mobile Auth Buttons */}
                         {isLoggedIn ? (
                             <div className="pt-4 pb-2 border-t border-gray-800 space-y-2 px-3">
-                                <Link
-                                    href="/items/manage"
-                                    onClick={() => setIsOpen(false)}
-                                    className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-2 rounded-gear text-base font-medium"
-                                >
-                                    <LayoutDashboard size={18} /> Dashboard
-                                </Link>
                                 <button
                                     onClick={() => { setIsOpen(false); handleLogout(); }}
                                     className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 px-3 py-2 rounded-gear text-base font-medium"
