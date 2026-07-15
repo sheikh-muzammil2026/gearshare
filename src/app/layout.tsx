@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-neutralBg text-primary min-h-screen flex flex-col justify-between`}>
+        <SessionProvider>
         <div>
           <Navbar />
           <main>
@@ -26,6 +28,7 @@ export default function RootLayout({
           </main>
         </div>
         <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
@@ -36,3 +39,5 @@ export default function RootLayout({
 
 // JWT_SECRET=gearshare:eU4IsxJhtgL6cmBS
 // NEXTAUTH_URL=http://localhost:3000
+
+
