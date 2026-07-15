@@ -15,7 +15,7 @@ export default function ManageItems() {
 
     const fetchItems = async () => {
         try {
-            const res = await fetch('/api/items');
+            const res = await fetch('/api/items/user');
             const data = await res.json();
             if (res.ok) setItems(data);
         } catch (err) {
