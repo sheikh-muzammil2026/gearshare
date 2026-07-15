@@ -7,21 +7,28 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false); // Authentication state
 
-    // Demo testing-এর জন্য মাউন্ট হওয়ার পর স্টেট চেক করার একটি ডামি লজিক
+    // 🔐 ডাইনামিকালি আমাদের JWT কুকি 'user_session' চেক করা
     useEffect(() => {
-        // পরবর্তীতে এখানে আপনার আসল JWT cookie/localStorage চেক বসবে
-        const token = document.cookie.includes('token');
-        setIsLoggedIn(token);
+        const checkAuth = () => {
+            const hasSession = document.cookie.includes('user_session=');
+            setIsLoggedIn(hasSession);
+        };
+
+        checkAuth();
+        
+        // পেজ ফোকাস বা কুকি স্টেট পরিবর্তনের ক্ষেত্রে রিয়েলটাইম আপডেট রাখার জন্য
+        window.addEventListener('focus', checkAuth);
+        return () => window.removeEventListener('focus', checkAuth);
     }, []);
 
-    // Public routes (Logged out state) - Minimum 3 routes
+    // 🌍 সবার জন্য ওপেন সাধারণ রুটস
     const publicRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
         { name: 'About Us', path: '/about' },
     ];
 
-    // Protected routes (Logged in state) - Minimum 4 routes (Dashboard-এর বদলে Manage Items রাখা হয়েছে)
+    // 🛡️ শুধুমাত্র লগইন থাকলে এই রুটগুলো দেখাবে (ড্যাশবোর্ড সম্পূর্ণ রিমুভড)
     const protectedRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
@@ -36,7 +43,8 @@ export default function Navbar() {
         try {
             const res = await fetch('/api/auth/logout', { method: 'POST' });
             if (res.ok) {
-                alert('Logged out successfully!');
+                alert('সফলভাবে লগআউট হয়েছে!');
+                setIsLoggedIn(false);
                 window.location.href = '/login'; // লগআউট শেষে লগইন পেজে রিডাইরেক্ট
             }
         } catch (err) {
@@ -68,7 +76,7 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        {/* Dynamic Auth Buttons */}
+                        {/* 🔄 Dynamic Auth Buttons for Desktop */}
                         {isLoggedIn ? (
                             <div className="flex items-center gap-3">
                                 <button
@@ -124,7 +132,7 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        {/* Mobile Auth Buttons */}
+                        {/* 🔄 Dynamic Auth Buttons for Mobile */}
                         {isLoggedIn ? (
                             <div className="pt-4 pb-2 border-t border-gray-800 space-y-2 px-3">
                                 <button
