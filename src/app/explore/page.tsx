@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, SlidersHorizontal, Tag, ArrowRight, Loader2 } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, Tag, ArrowRight, Loader2, Info } from 'lucide-react';
 
 const CATEGORIES = [
     'All Gears',
@@ -23,7 +23,7 @@ export default function ExploreGears() {
     useEffect(() => {
         const fetchGears = async () => {
             try {
-                const res = await fetch('/api/items');
+                const res = await fetch('/api/items', { cache: 'no-store' });
                 if (!res.ok) throw new Error('Failed to fetch data from database');
                 const data = await res.json();
                 setGears(data);
@@ -104,10 +104,10 @@ export default function ExploreGears() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                         {filteredGears.map((gear) => (
                             <div
-                                key={gear._id} // MongoDB-র ডিফল্ট ইউনিক আইডি
+                                key={gear._id}
                                 className="bg-white rounded-gear border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden"
                             >
-                                {/* Product Image (Unsplash placeholder based on query or generic fallback) */}
+                                {/* Product Image */}
                                 <div className="relative aspect-[4/3] w-full bg-gray-100 overflow-hidden">
                                     <img
                                         src={`https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&q=80`}
@@ -131,7 +131,7 @@ export default function ExploreGears() {
                                         </h3>
                                     </div>
 
-                                    <div className="space-y-3 pt-2 border-t border-gray-50">
+                                    <div className="space-y-4 pt-2 border-t border-gray-50">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-1 text-gray-500 text-sm">
                                                 <MapPin size={16} className="text-gray-400" />
@@ -143,17 +143,27 @@ export default function ExploreGears() {
                                             </div>
                                         </div>
 
-                                        <Link
-                                            href={`/explore/${gear._id}`}
-                                            className={`w-full py-3 rounded-gear text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${gear.available
-                                                    ? 'bg-accent text-white hover:bg-blue-700 shadow-md shadow-blue-500/10'
-                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                                }`}
-                                            onClick={(e) => !gear.available && e.preventDefault()}
-                                        >
-                                            {gear.available ? 'Rent Now' : 'Not Available'}
-                                            {gear.available && <ArrowRight size={14} />}
-                                        </Link>
+                                        {/* 🔘 বাটন গ্রুপ - Details এবং Rent Now */}
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {/* Details Button */}
+                                            <Link
+                                                href={`/explore/${gear._id}`}
+                                                className="w-full py-2.5 bg-gray-100 text-primary hover:bg-gray-200 rounded-gear text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.97]"
+                                            >
+                                                <Info size={14} /> Details
+                                            </Link>
+
+                                            {/* Rent Now Button */}
+                                            <Link
+                                                href={`/explore/${gear._id}`}
+                                                className={`w-full py-2.5 rounded-gear text-xs font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.97] ${gear.available
+                                                        ? 'bg-accent text-white hover:bg-blue-700 shadow-md shadow-blue-500/10'
+                                                        : 'bg-gray-200 text-gray-400 cursor-not-allowed pointer-events-none'
+                                                    }`}
+                                            >
+                                                Rent Now <ArrowRight size={14} />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
