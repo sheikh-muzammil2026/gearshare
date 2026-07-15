@@ -1,8 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Lock, ArrowRight, Loader2, Key } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, Key, Eye, EyeOff } from 'lucide-react';
 import { signIn } from 'next-auth/react';
+
 export default function Login() {
     const [formData, setFormData] = useState({
         email: '',
@@ -12,6 +13,7 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [socialLoading, setSocialLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false); // 👁️ পাসওয়ার্ড দেখানোর স্টেট
 
     // ডেমো ক্রেডেনশিয়াল অটো-ফিল ফাংশন
     const handleDemoLogin = (role: 'admin' | 'user') => {
@@ -62,7 +64,6 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         setSocialLoading(true);
         try {
-            
             await signIn('google', { callbackUrl: '/' }); 
         } catch (err) {
             setError("Google login failed. Please try again.");
@@ -82,7 +83,7 @@ export default function Login() {
 
                 {error && <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-gear font-medium">⚠️ {error}</div>}
 
-                {/* ─── DEMO LOGIN BUTTONS (রিকোয়ারমেন্ট অনুযায়ী ক্রেডেনশিয়াল অটো-ফিল) ─── */}
+                {/* ─── DEMO LOGIN BUTTONS ─── */}
                 <div className="bg-slate-50 border border-dashed border-slate-200 p-4 rounded-gear space-y-2">
                     <p className="text-xs font-bold text-gray-500 flex items-center gap-1 uppercase tracking-wider">
                         <Key size={14} className="text-accent animate-pulse" /> Try Quick Demo Login:
@@ -135,13 +136,21 @@ export default function Login() {
                         <div className="relative">
                             <Lock className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                             <input
-                                type="password"
+                                type={showPassword ? 'text' : 'password'} // 👁️ টাইপ পরিবর্তন করার লজিক
                                 required
                                 placeholder="••••••••"
                                 value={formData.password}
-                                className="w-full bg-gray-50 border border-gray-200 rounded-gear py-3 pl-11 pr-4 text-sm font-medium text-primary outline-none focus:border-accent focus:bg-white transition-all"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-gear py-3 pl-11 pr-12 text-sm font-medium text-primary outline-none focus:border-accent focus:bg-white transition-all"
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             />
+                            {/* 👁️ Eye / EyeOff বাটনের পজিশনিং ও অ্যাকশন */}
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600 focus:outline-none"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
                         </div>
                     </div>
 
@@ -156,8 +165,8 @@ export default function Login() {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full group bg-accent hover:bg-blue-700 text-white font-semibold py-3.5 rounded-gear transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10 active:scale-95 disabled:bg-gray-400 mt-2"
+                        disabled={loading || socialLoading} // 🔄 কোনো একটি লোড হলে বাটন ডিজেবল হবে
+                        className="w-full group bg-accent hover:bg-blue-700 text-white font-semibold py-3.5 rounded-gear transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/10 active:scale-95 disabled:bg-gray-400 disabled:cursor-not-allowed mt-2"
                     >
                         {loading ? (
                             <>
@@ -182,8 +191,8 @@ export default function Login() {
                 <button
                     type="button"
                     onClick={handleGoogleLogin}
-                    disabled={socialLoading}
-                    className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-gear transition-all flex items-center justify-center gap-2.5 active:scale-95 disabled:bg-gray-100"
+                    disabled={loading || socialLoading} // 🔄 সাবমিট লোডিংয়ের সময়েও গুগল বাটন ব্লকড থাকবে
+                    className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-gear transition-all flex items-center justify-center gap-2.5 active:scale-95 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                     {socialLoading ? (
                         <Loader2 className="animate-spin w-4 h-4" />
