@@ -52,9 +52,17 @@ export async function GET() {
     }
 }
 
+
 // ==================== POST METHOD ====================
 export async function POST(request: Request) {
     try {
+        // proxy.ts থেকে আসা ইউজারের ইমেইল হেডার রিড করা
+        const userEmail = request.headers.get('x-user-email');
+
+        if (!userEmail) {
+            return NextResponse.json({ message: 'Unauthorized access' }, { status: 401 });
+        }
+
         const body = await request.json();
         const { title, category, price, location, description } = body;
 
@@ -66,11 +74,12 @@ export async function POST(request: Request) {
         const db = client.db();
 
         const newItem = {
-            title,
+            title, // 👈 ডাটাবেসে title নামে সেভ হচ্ছে
             category,
             price: Number(price),
             location,
             description,
+            ownerEmail: userEmail, // 👈 এই লাইনটি মিসিং ছিল, এখন যুক্ত করা হলো
             available: true,
             createdAt: new Date()
         };
