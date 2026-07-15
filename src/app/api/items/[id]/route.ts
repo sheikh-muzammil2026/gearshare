@@ -1,15 +1,9 @@
 import { NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 
-// 🔄 ক্যাশিং চিরতরে বন্ধ করার জন্য এটি যোগ করুন
-export const dynamic = 'force-dynamic'; 
+export const dynamic = 'force-dynamic';
 
 const uri = process.env.MONGODB_URI as string;
-// ... বাকি কোড অপরিবর্তিত থাকবে
-
-import { NextResponse } from 'next/server';
-import { MongoClient, ObjectId } from 'mongodb';
-
 let cachedClient: MongoClient | null = null;
 
 async function getMongoClient() {
@@ -20,31 +14,36 @@ async function getMongoClient() {
 }
 
 // ==================== GET METHOD ====================
-// নির্দিষ্ট আইডি-র আইটেমের বিস্তারিত তথ্য দেখানোর জন্য
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> } // params কে Promise হিসেবে টাইপ করা হয়েছে
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        // ১. প্রথমে params প্রমিজটিকে await করে আইডি বের করা
         const resolvedParams = await params;
         const itemId = resolvedParams.id;
 
-        // আইডি ফরম্যাট ঠিক আছে কিনা ভ্যালিডেশন
-        if (!itemId || itemId.length !== 24) {
-            return NextResponse.json({ message: 'Invalid ID format!' }, { status: 400 });
+        if (!itemId) {
+            return NextResponse.json({ message: 'ID missing!' }, { status: 400 });
         }
 
         const client = await getMongoClient();
         const db = client.db('gearshare');
 
-        // ২. MongoDB থেকে নির্দিষ্ট ObjectId দিয়ে ডেটা খোঁজা
-        const item = await db.collection('items').findOne({
-            _id: new ObjectId(itemId)
-        });
+        // ObjectId এবং Plain String দুইভাবেই খোঁজার লজিক (যাতে Not Found এরর না আসে)
+        let query: any = { _id: itemId };
+        if (itemId.length === 24) {
+            query = {
+                $or: [
+                    { _id: new ObjectId(itemId) },
+                    { _id: itemId }
+                ]
+            };
+        }
+
+        const item = await db.collection('items').findOne(query);
 
         if (!item) {
-            return NextResponse.json({ message: 'Item not found!' }, { status: 404 });
+            return NextResponse.json({ message: 'Item not found in DB!' }, { status: 404 });
         }
 
         return NextResponse.json(item, { status: 200 });
@@ -56,7 +55,6 @@ export async function GET(
 }
 
 // ==================== DELETE METHOD ====================
-// নির্দিষ্ট আইডি-র আইটেম ডিলিট করার জন্য (আপনার আগের কোডটি অপরিবর্তিত রাখা হয়েছে)
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
