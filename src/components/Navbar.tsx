@@ -33,7 +33,7 @@ export default function Navbar() {
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
         { name: 'Add Item', path: '/items/add' },
-        { name: 'Manage Items', path: '/items/manage' },
+        { name: 'Manage Items', path: '/dashboard/manage' },
         { name: 'About Us', path: '/about' },
     ];
 
