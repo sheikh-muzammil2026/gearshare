@@ -20,12 +20,12 @@ export default function Login() {
         if (role === 'admin') {
             setFormData({
                 email: 'discordsstudent@gmail.com',
-                password: 'password123',
+                password: '1234567890',
             });
         } else {
             setFormData({
-                email: 'user@gearshare.com',
-                password: 'password123',
+                email: 'test@gmail.com',
+                password: '1234567890',
             });
         }
     };
