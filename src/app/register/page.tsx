@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { User, Mail, Lock, Phone, ArrowRight, Loader2 } from 'lucide-react';
+import { signIn } from 'next-auth/react'; // 🔐 NextAuth এর signIn মেথড ইম্পোর্ট করা হলো
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -62,13 +63,16 @@ export default function Register() {
         }
     };
 
+    // 🛠️ গুগল দিয়ে রেজিস্ট্রেশন করার ফিক্সড হ্যান্ডলার
     const handleGoogleRegister = async () => {
         setSocialLoading(true);
+        setError('');
         try {
             console.log("Redirecting to Google Register...");
-            window.location.href = '/api/auth/google';
+            // 🚀 সরাসরি GET রিকোয়েস্টের বদলে NextAuth এর নিরাপদ POST মেথড ফায়ার করা হলো
+            await signIn('google', { callbackUrl: '/' });
         } catch (err) {
-            setError("Google Registration failed.");
+            setError("Google Registration failed. Please try again.");
             setSocialLoading(false);
         }
     };
