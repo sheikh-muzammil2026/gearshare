@@ -13,9 +13,16 @@ export default function ManageItems() {
         fetchItems();
     }, []);
 
-    const fetchItems = async () => {
+        const fetchItems = async () => {
         try {
-            const res = await fetch('/api/items/user');
+            // 🔄 cache: 'no-store' যোগ করা হলো
+            const res = await fetch('/api/items/user', {
+                cache: 'no-store',
+                headers: {
+                    'Pragma': 'no-cache',
+                    'Cache-Control': 'no-cache'
+                }
+            });
             const data = await res.json();
             if (res.ok) setItems(data);
         } catch (err) {
@@ -25,6 +32,7 @@ export default function ManageItems() {
         }
     };
 
+    
     // ২. ডেটাবেস থেকে আইটেম ডিলিট করার ফাংশন
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this gear?')) return;
