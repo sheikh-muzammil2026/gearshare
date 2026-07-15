@@ -9,11 +9,23 @@ export default function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const pathname = usePathname(); // 👈 কারেন্ট পাথ
 
-    // 🔐 কুকি চেক করার মেইন ফাংশন
-    const checkAuth = () => {
-        if (typeof window !== 'undefined') {
-            const hasSession = document.cookie.includes('user_session=');
-            setIsLoggedIn(hasSession);
+  // 🔐 API কল করে সার্ভার থেকে লগইন স্ট্যাটাস জানা
+    const checkAuth = async () => {
+        try {
+            // credentials: 'include' যোগ করা হয়েছে যাতে httpOnly কুকি সার্ভারে পৌঁছায়
+            const res = await fetch('/api/auth/me', { 
+                method: 'GET',
+                credentials: 'include', 
+                cache: 'no-store' 
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                setIsLoggedIn(data.isLoggedIn);
+            }
+        } catch (err) {
+            console.error('Auth check failed:', err);
+            setIsLoggedIn(false);
         }
     };
 
