@@ -79,17 +79,19 @@ export default function ManageItems() {
                                 <th className="p-4">Gear Details</th>
                                 <th className="p-4">Category</th>
                                 <th className="p-4">Price</th>
-                                <th className="p-4">Location</th>
+                                <th className="p-4">Description</th>
                                 <th className="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 text-sm">
                             {items.map((item) => (
                                 <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="p-4 font-bold text-primary">{item.title}</td>
+                                    {/* 🔄 item.title পরিবর্তন করে item.name করা হলো */}
+                                    <td className="p-4 font-bold text-primary">{item.name}</td>
                                     <td className="p-4 text-gray-500">{item.category}</td>
                                     <td className="p-4 font-semibold text-primary">${item.price}/day</td>
-                                    <td className="p-4 text-gray-500">{item.location}</td>
+                                    {/* 🔄 location এর বদলে item.description লিমিট করে দেখানো হলো */}
+                                    <td className="p-4 text-gray-500 max-w-xs truncate">{item.description}</td>
                                     <td className="p-4 text-center">
                                         <button
                                             onClick={() => handleDelete(item._id)}
