@@ -1,46 +1,50 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // 👈 রাউট চেঞ্জ ট্র্যাক করার জন্য
+import { usePathname } from 'next/navigation';
 import { Menu, X, LogOut, LogIn, UserPlus } from 'lucide-react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const pathname = usePathname(); // 👈 কারেন্ট পাথ
+    const pathname = usePathname();
 
-    // 🔐 কুকি চেক করার মেইন ফাংশন
-    const checkAuth = () => {
-        if (typeof window !== 'undefined') {
-            const hasSession = document.cookie.includes('user_session=');
-            setIsLoggedIn(hasSession);
+    // 🔐 API কল করে সার্ভার থেকে লগইন স্ট্যাটাস জানা (httpOnly ফ্রেন্ডলি)
+    const checkAuth = async () => {
+        try {
+            const res = await fetch('/api/auth/me', { cache: 'no-store' });
+            if (res.ok) {
+                const data = await res.json();
+                setIsLoggedIn(data.isLoggedIn);
+            }
+        } catch (err) {
+            console.error('Auth check failed:', err);
+            setIsLoggedIn(false);
         }
     };
 
-    // ইউজার পেজ চেঞ্জ করলেই (pathname পরিবর্তন হলে) কুকি চেক হবে
+    // রাউট চেঞ্জ হলে বা পেজ লোড হলে চেক হবে
     useEffect(() => {
         checkAuth();
     }, [pathname]);
 
-    // উইন্ডো ফোকাস বা স্টোরেজ চেঞ্জ হলে ব্যাকআপ চেক
+    // গ্লোবাল উইন্ডো ফোকাস ব্যাকআপ
     useEffect(() => {
         window.addEventListener('focus', checkAuth);
         return () => window.removeEventListener('focus', checkAuth);
     }, []);
 
-    // 🌍 পাবলিক রুটস
     const publicRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
         { name: 'About Us', path: '/about' },
     ];
 
-    // 🛡️ প্রোটেক্টেড রুটস
     const protectedRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
         { name: 'Add Item', path: '/items/add' },
-        { name: 'Manage Items', path: '/dashboard/manage' },
+        { name: 'Manage Items', path: '/items/manage' },
         { name: 'About Us', path: '/about' },
     ];
 
