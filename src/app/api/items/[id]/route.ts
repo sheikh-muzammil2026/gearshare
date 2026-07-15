@@ -10,7 +10,6 @@ const uri = process.env.MONGODB_URI as string;
 import { NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 
-const uri = process.env.MONGODB_URI as string;
 let cachedClient: MongoClient | null = null;
 
 async function getMongoClient() {
