@@ -9,10 +9,16 @@ export default function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const pathname = usePathname();
 
-    // 🔐 API কল করে সার্ভার থেকে লগইন স্ট্যাটাস জানা (httpOnly ফ্রেন্ডলি)
+ // 🔐 API কল করে সার্ভার থেকে লগইন স্ট্যাটাস জানা
     const checkAuth = async () => {
         try {
-            const res = await fetch('/api/auth/me', { cache: 'no-store' });
+            // credentials: 'include' যোগ করা হয়েছে যাতে httpOnly কুকি সার্ভারে পৌঁছায়
+            const res = await fetch('/api/auth/me', { 
+                method: 'GET',
+                credentials: 'include', 
+                cache: 'no-store' 
+            });
+            
             if (res.ok) {
                 const data = await res.json();
                 setIsLoggedIn(data.isLoggedIn);
