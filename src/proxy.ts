@@ -5,7 +5,6 @@ import * as jose from 'jose';
 const jwtSecret = process.env.JWT_SECRET as string;
 
 export async function proxy(request: NextRequest) {
-    // ⭐ সুরক্ষিতভাবে স্ট্যান্ডার্ড request.url থেকে pathname বের করা (Next.js 16 এ এরর প্রুফ)
     const url = new URL(request.url);
     const pathname = url.pathname;
 
@@ -21,8 +20,11 @@ export async function proxy(request: NextRequest) {
     // 🛡️ ৩. গ্যাজেট সম্পর্কিত সুরক্ষিত API রাউটস প্রটেকশন
     if (pathname.startsWith('/api/items')) {
 
-        // GET রিকোয়েস্ট (এক্সপ্লোর পেজ) ছাড়া বাকি সব (POST, DELETE) প্রটেক্ট করব
-        if (request.method !== 'GET') {
+        // 🔄 পরিবর্তন: যদি রিকোয়েস্টটি '/api/items/user' হয়, অথবা GET বাদে অন্য মেথড (POST, DELETE) হয়
+        const isUserItemsRoute = pathname === '/api/items/user';
+        const isWriteMethod = request.method !== 'GET';
+
+        if (isUserItemsRoute || isWriteMethod) {
 
             if (!token) {
                 return NextResponse.json({ message: 'Authentication required! Please login.' }, { status: 401 });
