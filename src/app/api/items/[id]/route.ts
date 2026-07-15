@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 
+// 🔄 ক্যাশিং চিরতরে বন্ধ করার জন্য এটি যোগ করুন
+export const dynamic = 'force-dynamic'; 
+
+const uri = process.env.MONGODB_URI as string;
+// ... বাকি কোড অপরিবর্তিত থাকবে
+
+import { NextResponse } from 'next/server';
+import { MongoClient, ObjectId } from 'mongodb';
+
 const uri = process.env.MONGODB_URI as string;
 let cachedClient: MongoClient | null = null;
 
