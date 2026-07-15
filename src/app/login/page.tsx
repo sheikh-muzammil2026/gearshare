@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Mail, Lock, ArrowRight, Loader2, Key } from 'lucide-react';
-
+import { signIn } from 'next-auth/react';
 export default function Login() {
     const [formData, setFormData] = useState({
         email: '',
@@ -62,9 +62,8 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         setSocialLoading(true);
         try {
-            // আপনার গুগল ওঅথ (OAuth) এপিআই রিডাইরেকশন অথবা ফায়ারবেস মেথড এখানে কল হবে
-            console.log("Redirecting to Google OAuth...");
-            window.location.href = '/api/auth/google'; 
+            
+            await signIn('google', { callbackUrl: '/' }); 
         } catch (err) {
             setError("Google login failed. Please try again.");
             setSocialLoading(false);
