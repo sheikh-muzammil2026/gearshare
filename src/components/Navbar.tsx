@@ -1,34 +1,41 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'; // 👈 রাউট চেঞ্জ ট্র্যাক করার জন্য
 import { Menu, X, LogOut, LogIn, UserPlus } from 'lucide-react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Authentication state
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const pathname = usePathname(); // 👈 কারেন্ট পাথ
 
-    // 🔐 ডাইনামিকালি আমাদের JWT কুকি 'user_session' চেক করা
-    useEffect(() => {
-        const checkAuth = () => {
+    // 🔐 কুকি চেক করার মেইন ফাংশন
+    const checkAuth = () => {
+        if (typeof window !== 'undefined') {
             const hasSession = document.cookie.includes('user_session=');
             setIsLoggedIn(hasSession);
-        };
+        }
+    };
 
+    // ইউজার পেজ চেঞ্জ করলেই (pathname পরিবর্তন হলে) কুকি চেক হবে
+    useEffect(() => {
         checkAuth();
-        
-        // পেজ ফোকাস বা কুকি স্টেট পরিবর্তনের ক্ষেত্রে রিয়েলটাইম আপডেট রাখার জন্য
+    }, [pathname]);
+
+    // উইন্ডো ফোকাস বা স্টোরেজ চেঞ্জ হলে ব্যাকআপ চেক
+    useEffect(() => {
         window.addEventListener('focus', checkAuth);
         return () => window.removeEventListener('focus', checkAuth);
     }, []);
 
-    // 🌍 সবার জন্য ওপেন সাধারণ রুটস
+    // 🌍 পাবলিক রুটস
     const publicRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
         { name: 'About Us', path: '/about' },
     ];
 
-    // 🛡️ শুধুমাত্র লগইন থাকলে এই রুটগুলো দেখাবে (ড্যাশবোর্ড সম্পূর্ণ রিমুভড)
+    // 🛡️ প্রোটেক্টেড রুটস
     const protectedRoutes = [
         { name: 'Home', path: '/' },
         { name: 'Explore Gears', path: '/explore' },
@@ -45,7 +52,7 @@ export default function Navbar() {
             if (res.ok) {
                 alert('সফলভাবে লগআউট হয়েছে!');
                 setIsLoggedIn(false);
-                window.location.href = '/login'; // লগআউট শেষে লগইন পেজে রিডাইরেক্ট
+                window.location.href = '/login'; 
             }
         } catch (err) {
             console.error('Logout failed:', err);
@@ -76,7 +83,7 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        {/* 🔄 Dynamic Auth Buttons for Desktop */}
+                        {/* Dynamic Auth Buttons */}
                         {isLoggedIn ? (
                             <div className="flex items-center gap-3">
                                 <button
@@ -119,7 +126,7 @@ export default function Navbar() {
 
             {/* Mobile Dropdown Menu */}
             {isOpen && (
-                <div className="md:hidden bg-primary border-t border-gray-800 transition-all duration-300">
+                <div className="md:hidden bg-primary border-t border-gray-800">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         {currentRoutes.map((route) => (
                             <Link
@@ -132,7 +139,7 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        {/* 🔄 Dynamic Auth Buttons for Mobile */}
+                        {/* Mobile Auth Buttons */}
                         {isLoggedIn ? (
                             <div className="pt-4 pb-2 border-t border-gray-800 space-y-2 px-3">
                                 <button
