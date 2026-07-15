@@ -87,7 +87,7 @@ export default function ManageItems() {
                             {items.map((item) => (
                                 <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
                                     {/* 🔄 item.title পরিবর্তন করে item.name করা হলো */}
-                                    <td className="p-4 font-bold text-primary">{item.name}</td>
+                                    <td className="p-4 font-bold text-primary">{item.title}</td>
                                     <td className="p-4 text-gray-500">{item.category}</td>
                                     <td className="p-4 font-semibold text-primary">${item.price}/day</td>
                                     {/* 🔄 location এর বদলে item.description লিমিট করে দেখানো হলো */}
