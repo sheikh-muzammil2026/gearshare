@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/components/providers"; 
+import { AuthProvider } from "../components/providers/providers"; // 🔐 একদম সঠিক রিলেটিভ পাথ
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} bg-neutralBg text-primary min-h-screen flex flex-col justify-between`}>
-        {/* 🛡️ এখানে AuthProvider ব্যবহার করার কারণে সার্ভার সাইড এরর আর আসবে না */}
+        {/* 🛡️ সঠিক পাথের AuthProvider দিয়ে র‍্যাপ করা হলো */}
         <AuthProvider>
           <div>
             <Navbar />
