@@ -64,7 +64,7 @@ export default function Login() {
     const handleGoogleLogin = async () => {
         setSocialLoading(true);
         try {
-            await signIn('google', { callbackUrl: '/' }); 
+            await signIn('google', { callbackUrl: '/' });
         } catch (err) {
             setError("Google login failed. Please try again.");
             setSocialLoading(false);
@@ -129,7 +129,9 @@ export default function Login() {
                     <div className="space-y-1">
                         <div className="flex justify-between items-center">
                             <label className="text-xs font-semibold text-gray-600 uppercase">Password</label>
-                            <Link href="/forgot-password" className="text-xs font-semibold text-accent hover:underline">
+                            <Link
+                                // href="/forgot-password" 
+                                className="text-xs font-semibold text-accent hover:underline">
                                 Forgot Password?
                             </Link>
                         </div>
